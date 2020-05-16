@@ -31,7 +31,7 @@ export default class Home extends Component {
           <li key={product.id}>
             <img src={product.image} alt={product.title} />
             <strong>{product.title}</strong>
-            <span>{formatPrice(product.priceFormatted)}</span>
+            <span>{product.priceFormatted}</span>
             <button type="button">
               <div>
                 <MdAddShoppingCart size={16} color="#fff" /> 3
