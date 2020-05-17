@@ -24,9 +24,7 @@ export default function cart(state = [], action) {
           (product) => product.id === action.payload
         );
 
-        if (draft[productIndex].amount > 1) {
-          draft[productIndex].amount -= 1;
-        } else {
+        if (productIndex >= 0) {
           draft.splice(productIndex, 1);
         }
       });

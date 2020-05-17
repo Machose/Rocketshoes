@@ -10,9 +10,16 @@ import {
 // import { removeFromCart } from '../../store/modules/cart/actions'; //exemplo 01
 import * as CartActions from '../../store/modules/cart/actions';
 
+import { formatPrice } from '../../util/format';
+
 import { Container, ProductTable, Total } from './styles';
 
-function Cart({ cart, removeFromCart, updateProductAmountFromCart }) {
+function Cart({
+  cart,
+  totalFormatted,
+  removeFromCart,
+  updateProductAmountFromCart,
+}) {
   function increment(product) {
     updateProductAmountFromCart(product.id, product.amount + 1);
   }
@@ -68,7 +75,7 @@ function Cart({ cart, removeFromCart, updateProductAmountFromCart }) {
                 </div>
               </td>
               <td>
-                <strong>{product.priceFormatted} </strong>
+                <strong>{product.subTotalFormatted} </strong>
               </td>
               <td>
                 <button type="button">
@@ -89,7 +96,7 @@ function Cart({ cart, removeFromCart, updateProductAmountFromCart }) {
 
         <Total>
           <span>Total</span>
-          <strong>R$1920,00</strong>
+          <strong>{totalFormatted}</strong>
         </Total>
       </footer>
     </Container>
@@ -98,7 +105,16 @@ function Cart({ cart, removeFromCart, updateProductAmountFromCart }) {
 
 //Mapeia os dados contidos no estado do redux para serem utilizados no componente
 const mapStateToProps = (state) => ({
-  cart: state.cart,
+  cart: state.cart.map((product) => ({
+    ...product,
+    subTotalFormatted: formatPrice(product.price * product.amount),
+  })),
+  totalFormatted: formatPrice(
+    state.cart.reduce(
+      (total, product) => total + product.price * product.amount,
+      0
+    )
+  ),
 });
 
 //Convert actions do redux em propriedades do componente
