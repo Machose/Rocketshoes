@@ -1,19 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   MdRemoveCircleOutline,
   MdAddCircleOutline,
   MdDelete,
 } from 'react-icons/md';
 
+// import { removeFromCart } from '../../store/modules/cart/actions'; //exemplo 01
+import * as CartActions from '../../store/modules/cart/actions';
+
 import { Container, ProductTable, Total } from './styles';
 
-function Cart({ cart, dispatch }) {
-  const handleRemoveProduct = (product) => {
-    dispatch({
-      type: 'REMOVE_TO_CART',
-      payload: product.id,
-    });
+function Cart({ cart, removeFromCart }) {
+  const handleRemoveProduct = (id) => {
+    // dispatch(removeFromCart(id)); //exemplo 01
+    removeFromCart(id);
   };
   return (
     <Container>
@@ -57,7 +59,7 @@ function Cart({ cart, dispatch }) {
                   <MdDelete
                     size={15}
                     color="#7159c1"
-                    onClick={() => handleRemoveProduct(product)}
+                    onClick={() => handleRemoveProduct(product.id)}
                   />
                 </button>
               </td>
@@ -78,8 +80,13 @@ function Cart({ cart, dispatch }) {
   );
 }
 
+//Mapeia os dados contidos no estado do redux para serem utilizados no componente
 const mapStateToProps = (state) => ({
   cart: state.cart,
 });
 
-export default connect(mapStateToProps)(Cart);
+//Convert actions do redux em propriedades do componente
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

@@ -2,7 +2,7 @@ import producer from 'immer';
 
 export default function cart(state = [], action) {
   switch (action.type) {
-    case 'ADD_TO_CART':
+    case '@cart/ADD':
       return producer(state, (draft) => {
         const productIndex = draft.findIndex(
           (product) => product.id === action.payload.id
@@ -18,7 +18,7 @@ export default function cart(state = [], action) {
         }
       });
 
-    case 'REMOVE_TO_CART':
+    case '@cart/REMOVE':
       return producer(state, (draft) => {
         const productIndex = draft.findIndex(
           (product) => product.id === action.payload
