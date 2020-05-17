@@ -31,6 +31,22 @@ export default function cart(state = [], action) {
         }
       });
 
+    case '@cart/UPDATE_AMOUNT': {
+      if (action.payload.amount <= 0) {
+        return state;
+      }
+
+      return producer(state, (draft) => {
+        const productIndex = draft.findIndex(
+          (product) => product.id === action.payload.id
+        );
+
+        if (productIndex >= 0) {
+          draft[productIndex].amount = Number(action.payload.amount);
+        }
+      });
+    }
+
     default:
       return state;
   }
