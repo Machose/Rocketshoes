@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { addToCartSuccess, updateAmountSuccess } from './actions';
 
 import api from '../../../services/api';
+import history from '../../../services/history';
 import { formatPrice } from '../../../util/format';
 
 //funtion* === generator  ->  async funtion
@@ -46,6 +47,8 @@ function* addToCart(action) {
     };
 
     yield put(addToCartSuccess(data));
+
+    history.push('/cart');
   }
 }
 
