@@ -1,4 +1,5 @@
 import { call, select, put, all, takeLatest } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 
 // call -> chama metodos asincronos que retornam promises
 // put -> dispara uma action do redux
@@ -6,7 +7,7 @@ import { call, select, put, all, takeLatest } from 'redux-saga/effects';
 // takeLatest -> pega sempre a ultima chamada, descartando as anteriores (Counterar usuários que clicam muitas vezes)
 // select -> busca informações dentro do state
 
-import { addToCartSuccess, updateProductAmountFromCart } from './actions';
+import { addToCartSuccess, updateAmountSuccess } from './actions';
 
 import api from '../../../services/api';
 import { formatPrice } from '../../../util/format';
@@ -19,9 +20,20 @@ function* addToCart(action) {
     state.cart.find((p) => p.id === id)
   );
 
+  const stock = yield call(api.get, `/stock/${id}`);
+
+  const stockAmount = stock.data.amount;
+  const currentAmount = productExists ? productExists.amount : 0;
+
+  const amount = currentAmount + 1;
+
+  if (amount > stockAmount) {
+    toast.error('Quantidade solicitada fora de stock');
+    return;
+  }
+
   if (productExists) {
-    const amount = productExists.amount + 1;
-    yield put(updateProductAmountFromCart(id, amount));
+    yield put(updateAmountSuccess(id, amount));
   } else {
     const response = yield call(api.get, `/products/${id}`); // yield === await
 
@@ -37,4 +49,23 @@ function* addToCart(action) {
   }
 }
 
-export default all([takeLatest('@cart/ADD_REQUEST', addToCart)]);
+function* updateAmount(action) {
+  const { id, amount } = action.payload;
+
+  if (amount <= 0) return;
+
+  const stock = yield call(api.get, `stock/${id}`);
+  const stockAmount = stock.data.amount;
+
+  if (amount > stockAmount) {
+    toast.error('Quantidade solicitada fora de stock');
+    return;
+  }
+
+  yield put(updateAmountSuccess(id, amount));
+}
+
+export default all([
+  takeLatest('@cart/ADD_REQUEST', addToCart),
+  takeLatest('@cart/UPDATE_AMOUNT_REQUEST', updateAmount),
+]);

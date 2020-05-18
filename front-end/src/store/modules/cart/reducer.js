@@ -19,11 +19,7 @@ export default function cart(state = [], action) {
         }
       });
 
-    case '@cart/UPDATE_AMOUNT': {
-      if (action.payload.amount <= 0) {
-        return state;
-      }
-
+    case '@cart/UPDATE_AMOUNT_SUCCESS':
       return producer(state, (draft) => {
         const productIndex = draft.findIndex(
           (product) => product.id === action.payload.id
@@ -33,7 +29,6 @@ export default function cart(state = [], action) {
           draft[productIndex].amount = Number(action.payload.amount);
         }
       });
-    }
 
     default:
       return state;

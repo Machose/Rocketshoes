@@ -14,18 +14,13 @@ import { formatPrice } from '../../util/format';
 
 import { Container, ProductTable, Total } from './styles';
 
-function Cart({
-  cart,
-  totalFormatted,
-  removeFromCart,
-  updateProductAmountFromCart,
-}) {
+function Cart({ cart, totalFormatted, removeFromCart, updateAmountRequest }) {
   function increment(product) {
-    updateProductAmountFromCart(product.id, product.amount + 1);
+    updateAmountRequest(product.id, product.amount + 1);
   }
 
   function decrement(product) {
-    updateProductAmountFromCart(product.id, product.amount - 1);
+    updateAmountRequest(product.id, product.amount - 1);
   }
 
   const handleRemoveProduct = (id) => {
